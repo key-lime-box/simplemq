@@ -15,6 +15,7 @@ import org.keylimebox.simplemq.core.model.Queue;
 import org.keylimebox.simplemq.integration.services.QueueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -165,6 +166,30 @@ public class QueuesController
                           )
    {
       return service.subscribe (aQueueId, aSubscriberId);
+   }
+
+   @RequestMapping ("/{queueId}/publish")
+   public List<String> publish (
+                                 @PathVariable ("queueId")
+                                 String aQueueId,
+                                 @RequestParam ("publisher")
+                                 String aPublisherId,
+                                 @RequestParam (value="payload", required=false)
+                                 String aPayloadParam,
+                                 @RequestBody (required=false)
+                                 Object aPayloadBody
+                               )
+   {
+      if (aPayloadBody == null && aPayloadParam == null) {
+         throw new IllegalArgumentException ("Payload must be specified either as a body or as a parameter called 'payload'.");
+      }
+
+      Object myPayload  = aPayloadBody;
+      if (myPayload == null) {
+         myPayload      = aPayloadParam;
+      }
+
+      return service.publish (aQueueId, aPublisherId, myPayload);
    }
 
 

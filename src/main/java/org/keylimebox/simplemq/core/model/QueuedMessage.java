@@ -9,7 +9,6 @@ package org.keylimebox.simplemq.core.model;
 /*                                       Imports                                        */
 /*======================================================================================*/
 
-import java.io.Serializable;
 import java.util.Date;
 
 import org.springframework.data.annotation.Id;
@@ -21,7 +20,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 /*======================================================================================*/
 @SuppressWarnings ("nls")
 @Document (collection="messages")
-public class QueuedMessage implements Serializable
+public class QueuedMessage
 {
 
     /*==================================================================================*/
@@ -38,7 +37,8 @@ public class QueuedMessage implements Serializable
     /* Private Attributes                                                               */
     /*==================================================================================*/
 
-                /*======================================================================*/
+
+               /*======================================================================*/
                 /* ATTRIBUTE: id                                                        */
                 /**
                  * The ID of the message.
@@ -121,7 +121,7 @@ public class QueuedMessage implements Serializable
 
 
          /*=============================================================================*/
-         /* OPERATION:   getId                                            */
+         /* OPERATION:   getId                                                          */
          /**
           * Returns the message's ID.
           * <p>
@@ -134,7 +134,7 @@ public class QueuedMessage implements Serializable
    }
 
          /*=============================================================================*/
-         /* OPERATION:   getQueueId                                            */
+         /* OPERATION:   getQueueId                                                     */
          /**
           * Returns the Id of the queue the message was published to.
           * <p>
