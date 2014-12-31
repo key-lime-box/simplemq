@@ -18,13 +18,15 @@ MongoDB.
 
 # REST API
 
-## Listing the Queues
+## Queues
+
+### Listing the Queues
 
 GET `/api/queues`
 
 This API call returns a list of the queues which exist.
 
-## Creating a Queue
+### Creating a Queue
 
 POST `/api/queues/new`
 
@@ -38,21 +40,16 @@ To create a queue, post the following parameters:
 - `name`: A friendly queue name.
 - `description`: A longer description as to what this queue is for.
 
-## Viewing Existing Publishers
+### Subscribing to a Queue
 
-GET `/api/publishers`
+POST `/api/queues/{queueId}/subscribe`
 
-Returns the list of existing publishers.
+To subscribe to a queue, post the following parameters to this REST service:
 
-## Registering a Publisher
-
-POST `/api/publishers/new`
-
-Before publishing messages, the applications need to be registered as publisher. This is
-a one-time action which is normally done during installation, not at runtime.
+- `subscriberId`: The ID of the subscriber.
 
 
-## Publishing a Message
+### Publishing a Message
 
 POST `/api/queues/{queueId}/publish`
 
@@ -61,13 +58,32 @@ A message can be published by posting a payload object (JSON) to this REST servi
 *Note*: if there are no subscriber to a queue, the messages published will not be 
 recorded.
 
-## Listing the Subscribers
+
+## Publishers
+
+### Viewing Existing Publishers
+
+GET `/api/publishers`
+
+Returns the list of existing publishers.
+
+### Registering a New Publisher
+
+POST `/api/publishers/new`
+
+Before publishing messages, the applications need to be registered as publisher. This is
+a one-time action which is normally done during installation, not at runtime.
+
+
+## Subscribers
+
+### Listing the Subscribers
 
 GET `/api/subscribers`
 
 Returns the list of all registered subscribers.
 
-## Registering a Subscriber
+### Registering a New Subscriber
 
 POST `/api/subscribers/new`
 
@@ -81,12 +97,4 @@ This is done by posting the following parameters to the above REST service:
 This is normally done only once when an application is deployed either manually or by the
 configuration management system. It is not something that generally gets put into the code
 of the subscriber application.
-
-## Subscribing to a Queue
-
-POST `/api/queues/{queueId}/subscribe`
-
-To subscribe to a queue, post the following parameters to this REST service:
-
-- `subscriberId`: The ID of the subscriber.
 
