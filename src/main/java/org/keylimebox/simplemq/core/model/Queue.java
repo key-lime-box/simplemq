@@ -9,6 +9,9 @@ package org.keylimebox.simplemq.core.model;
 /*                                       Imports                                        */
 /*======================================================================================*/
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -70,6 +73,14 @@ public class Queue
                 /*======================================================================*/
    private String             description;
 
+                /*======================================================================*/
+                /* ATTRIBUTE: subscribers                                               */
+                /**
+                 * The subscribers to this queue.
+                 */
+                /*======================================================================*/
+   private List<String>       subscribers;
+
     /*==================================================================================*/
     /* Class Attributes                                                                 */
     /*==================================================================================*/
@@ -114,6 +125,11 @@ public class Queue
       return (description);
    }
 
+   public List<String> getSubscribers ()
+   {
+      return (subscribers);
+   }
+
     /*==================================================================================*/
     /* Attribute Set Operations                                                         */
     /*==================================================================================*/
@@ -133,6 +149,11 @@ public class Queue
       description = aDescription;
    }
 
+   public void setSubscribers (List<String> aSubscribers)
+   {
+      subscribers = aSubscribers;
+   }
+
     /*==================================================================================*/
     /* Private Operations                                                               */
     /*==================================================================================*/
@@ -148,6 +169,24 @@ public class Queue
     /*==================================================================================*/
     /* Public Operations                                                                */
     /*==================================================================================*/
+
+         /*=============================================================================*/
+         /* OPERATION:   addSubscriber                                                  */
+         /**
+          * Adds a subscriber to the queue.
+          * <p>
+          * @param aSubscriberId
+          * <p>
+          * @since Dec 31, 2014
+          */
+         /*=============================================================================*/
+   public void addSubscriber (String aSubscriberId)
+   {
+      if (subscribers == null) {
+         subscribers = new ArrayList<String> ();
+      }
+      subscribers.add (aSubscriberId);
+   }
 
     /*==================================================================================*/
     /* Abstract Operations (definitions)                                                */

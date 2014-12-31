@@ -14,6 +14,7 @@ import java.util.List;
 import org.keylimebox.simplemq.core.model.Queue;
 import org.keylimebox.simplemq.integration.services.QueueService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -143,7 +144,28 @@ public class QueuesController
       return service.createNewQueue (aName, aDescription);
    }
 
-
+         /*=============================================================================*/
+         /* OPERATION:   subscribe                                                      */
+         /**
+          * Adds a given subscriber to the queue.
+          * <p>
+          * @param aQueueId
+          * @param aSubscriberId
+          * @return
+          * <p>
+          * @since Dec 31, 2014
+          */
+         /*=============================================================================*/
+   @RequestMapping ("/{queueId}/subscribe")
+   public Queue subscribe (
+                           @PathVariable ("queueId")
+                           String aQueueId,
+                           @RequestParam ("subscriber")
+                           String aSubscriberId
+                          )
+   {
+      return service.subscribe (aQueueId, aSubscriberId);
+   }
 
 
     /*==================================================================================*/

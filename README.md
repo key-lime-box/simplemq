@@ -46,7 +46,7 @@ POST `/api/queues/{queueId}/subscribe`
 
 To subscribe to a queue, post the following parameters to this REST service:
 
-- `subscriberId`: The ID of the subscriber.
+- `subscriber`: The ID of the subscriber.
 
 
 ### Publishing a Message

@@ -145,6 +145,30 @@ public class QueueService
       return queueRepo.save (myQueue);
    }
 
+         /*=============================================================================*/
+         /* OPERATION:   subscribe                                                      */
+         /**
+          * Registers a subscriber with the queue.
+          * <p>
+          * @param aQueueId
+          *          The ID of the queue to subscribe to.
+          *
+          * @param aSubscriberId
+          *          The ID of the subscriber that wish to subscribe to the queue.
+          *
+          * @return The queue modified.
+          * <p>
+          * @since Dec 31, 2014
+          */
+         /*=============================================================================*/
+   public Queue subscribe (String aQueueId, String aSubscriberId)
+   {
+      Queue myQueue = queueRepo.findOne (aQueueId);
+      myQueue.addSubscriber (aSubscriberId);
+
+      return queueRepo.save (myQueue);
+   }
+
     /*==================================================================================*/
     /* Abstract Operations (definitions)                                                */
     /*==================================================================================*/
