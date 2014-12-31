@@ -18,3 +18,59 @@ MongoDB.
 
 # REST API
 
+## Listing the Queues
+
+GET `/api/queues`
+
+This API call returns a list of the queues which exist.
+
+## Creating a Queue
+
+POST `/api/queues/new`
+
+Applications that are going to be publishing messages must first create a queue. This is 
+a one-time action which is normally done during the deployment of the application (i.e.
+manually or through a configuration management system, not necessarily in the application's
+code).
+
+To create a queue, post the following parameters:
+
+- `name`: A friendly queue name.
+- `description`: A longer description as to what this queue is for.
+
+
+## Publishing a Message
+
+POST `/api/queues/{queueId}/publish`
+
+A message can be published by posting a payload object (JSON) to this REST service.
+
+## Listing the Subscribers
+
+GET `/api/subscribers`
+
+Returns the list of all registered subscribers.
+
+## Registering a Subscriber
+
+POST `/api/subscribers/new`
+
+Before a subscriber can register with queues, it needs to be registered as a subscriber
+so it gets its own ID. 
+
+This is done by posting the following parameters to the above REST service:
+
+- `name`: A friendly name for this subscriber.
+
+This is normally done only once when an application is deployed either manually or by the
+configuration management system. It is not something that generally gets put into the code
+of the subscriber application.
+
+## Subscribing to a Queue
+
+POST `/api/queues/{queueId}/subscribe`
+
+To subscribe to a queue, post the following parameters to this REST service:
+
+- `subscriberId`: The ID of the subscriber.
+
