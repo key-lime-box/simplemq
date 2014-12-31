@@ -218,7 +218,10 @@ public class QueuesController
          /*=============================================================================*/
          /* OPERATION:   next                                                           */
          /**
-          * Gets the payload of the next message.
+          * Gets the next message. An optional parameter (<code>previous</code>) can be
+          * passed in which is the ID of the previous message which was handled. When
+          * such a parameter is present, that message is first removed and then the next
+          * one is gotten.
           * <p>
           * @param aQueueId
           * @param aSubscriberId
@@ -232,10 +235,12 @@ public class QueuesController
                               @PathVariable ("queueId")
                               String aQueueId,
                               @RequestParam ("subscriber")
-                              String aSubscriberId
+                              String aSubscriberId,
+                              @RequestParam (value="previous", required=false)
+                              String aPreviousMessageId
                              )
    {
-      return service.next (aQueueId, aSubscriberId);
+      return service.removeAndNext (aPreviousMessageId, aQueueId, aSubscriberId);
    }
 
 

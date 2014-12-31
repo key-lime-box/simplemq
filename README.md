@@ -113,8 +113,5 @@ GET `/api/queues/{queueId}/next`
 
 Parameters:
  - `subscriber`: The ID of the subscriber to get the message for.
- 
-*Note*: getting the next message does not remove it from the queue. A call to `remove` 
-is necessary to notify the message queue that the message has been successfully processed
-and can be removed.
+ - `previous`: (Optional) The ID of the previous message to be removed before getting the next one.
 

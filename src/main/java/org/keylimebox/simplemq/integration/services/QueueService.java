@@ -232,6 +232,36 @@ public class QueueService
       return messageRepo.findFirstByQueueIdAndSubscriberIdOrderByDateQueuedAsc (aQueueId, aSubscriberId);
    }
 
+         /*=============================================================================*/
+         /* OPERATION:   removeAndNext                                                  */
+         /**
+          * Removes the message with the given ID and returns the next message.
+          * <p>
+          * @param aMessageIdToRemove
+          *          The ID of the message to remove.
+          *
+          * @param aQueueId
+          *          The ID of the queue to get the next message from.
+          *
+          * @param aSubscriberId
+          *          The ID of the subscriber to get the next message for.
+          *
+          * @return The next message.
+          * <p>
+          * @since Dec 31, 2014
+          */
+         /*=============================================================================*/
+   public QueuedMessage removeAndNext (
+                                          String aMessageIdToRemove,
+                                          String aQueueId,
+                                          String aSubscriberId
+                                      )
+    {
+      if (aMessageIdToRemove != null) {
+         messageRepo.delete (aMessageIdToRemove);
+      }
+      return next (aQueueId, aSubscriberId);
+    }
 
 
     /*==================================================================================*/
