@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+
+   <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}spring.log}"/>
+   <property name="FILE_LOG_PATTERN" value="%d{ISO8601}|%-36.36C|%-24.24M|%5.5L|%-10.10t|%-5.5p|%m%n"/>
+
+   <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder>
+         <pattern>${FILE_LOG_PATTERN}</pattern>
+      </encoder>
+   </appender>
+
+   <appender name="DEBUG_LEVEL_REMAPPER" class="org.springframework.boot.logging.logback.LevelRemappingAppender">
+      <destinationLogger>org.springframework.boot</destinationLogger>
+   </appender>
+
+   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <encoder>
+         <pattern>${FILE_LOG_PATTERN}</pattern>
+      </encoder>
+      <file>${LOG_FILE}</file>
+      <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+         <fileNamePattern>${LOG_FILE}.%i</fileNamePattern>
+         <MinIndex>1</MinIndex>
+         <MaxIndex>3</MaxIndex>
+      </rollingPolicy>
+      <triggeringPolicy
+         class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+         <MaxFileSize>10MB</MaxFileSize>
+      </triggeringPolicy>
+   </appender>
+
+
+   <logger name="org.hibernate.validator.internal.util.Version" level="WARN"/>
+   <logger name="org.apache.coyote.http11.Http11NioProtocol" level="WARN"/>
+   <logger name="org.crsh.plugin" level="WARN"/>
+   <logger name="org.apache.tomcat.util.net.NioSelectorPool" level="WARN"/>
+   <logger name="org.apache.catalina.startup.DigesterFactory" level="ERROR"/>
+   <logger name="org.apache.catalina.util.LifecycleBase" level="ERROR"/>
+   <logger name="org.eclipse.jetty.util.component.AbstractLifeCycle" level="ERROR"/>
+   <logger name="org.thymeleaf" additivity="false">
+      <appender-ref ref="DEBUG_LEVEL_REMAPPER"/>
+   </logger>
+
+
+
+</included>
