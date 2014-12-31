@@ -38,6 +38,12 @@ To create a queue, post the following parameters:
 - `name`: A friendly queue name.
 - `description`: A longer description as to what this queue is for.
 
+## Registering a Publisher
+
+POST `/api/publishers/new`
+
+Before publishing messages, the applications need to be registered as publisher. This is
+a one-time action which is normally done during installation, not at runtime.
 
 ## Publishing a Message
 
