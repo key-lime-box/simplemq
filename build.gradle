@@ -58,10 +58,10 @@ eclipse {
 dependencies {
    providedCompile 'org.springframework.boot:spring-boot-starter-tomcat'
    
-   compile 'org.springframework.boot:spring-boot-starter'
-   compile 'org.springframework.boot:spring-boot-starter-actuator'
    compile 'org.springframework.boot:spring-boot-starter-web'
- 
-   compile 'org.springframework.data:spring-data-mongodb:1.6.1.RELEASE'
+   compile 'org.springframework.boot:spring-boot-starter-actuator'
+   compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
+   
+   //compile 'org.springframework.data:spring-data-mongodb:1.6.1.RELEASE'
    
 } 

@@ -9,8 +9,6 @@ package org.keylimebox.simplemq.core.model;
 /*                                       Imports                                        */
 /*======================================================================================*/
 
-import java.io.Serializable;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -28,7 +26,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 /*======================================================================================*/
 @SuppressWarnings ("nls")
 @Document (collection="queues")
-public class Queue implements Serializable
+public class Queue
 {
 
     /*==================================================================================*/
@@ -45,7 +43,9 @@ public class Queue implements Serializable
     /* Private Attributes                                                               */
     /*==================================================================================*/
 
-                /*======================================================================*/
+
+
+               /*======================================================================*/
                 /* ATTRIBUTE: id                                                        */
                 /**
                  * The ID of the queue.

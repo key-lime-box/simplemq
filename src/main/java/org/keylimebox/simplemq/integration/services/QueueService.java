@@ -3,40 +3,36 @@
 /*                                  Package Definition                                  */
 /*======================================================================================*/
 
-package org.keylimebox.simplemq.server;
-
+package org.keylimebox.simplemq.integration.services;
 
 /*======================================================================================*/
 /*                                       Imports                                        */
 /*======================================================================================*/
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import java.util.List;
+
+import org.keylimebox.simplemq.core.model.Queue;
+import org.keylimebox.simplemq.core.repositories.QueueRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /*======================================================================================*/
 /*                           Class Definition / Implementation                          */
 /*======================================================================================*/
 /*======================================================================================*/
-/* CLASS:       Application                                                             */
+/* CLASS:       QueueService                                                            */
 /**
- * Configures the Spring framework. Enables auto-configuration and scans the
- * <code>org.keylimebox</code> package for configuration beans.
+ * Provides various services to interact with the queues and subscribers.
  * <p>
  * @author      etlweather
- * @since       Oct 28, 2014
+ * @since       Dec 31, 2014
  */
 /*======================================================================================*/
 @SuppressWarnings ("nls")
-@Configuration
-@ComponentScan (basePackages= {"org.keylimebox.simplemq"})
-@EnableAutoConfiguration (exclude= {HibernateJpaAutoConfiguration.class, DataSourceAutoConfiguration.class})
-@EnableMongoRepositories (basePackages="org.keylimebox.simplemq.core.repositories")
-public class Application
+@Service
+public class QueueService
 {
+
     /*==================================================================================*/
     /*===================================            ===================================*/
     /*=================================== Attributes ===================================*/
@@ -50,6 +46,15 @@ public class Application
     /*==================================================================================*/
     /* Private Attributes                                                               */
     /*==================================================================================*/
+
+                /*======================================================================*/
+                /* ATTRIBUTE: queueRepo                                                 */
+                /**
+                 * Data access object for queues.
+                 */
+                /*======================================================================*/
+   @Autowired
+   private QueueRepository                queueRepo;
 
     /*==================================================================================*/
     /* Class Attributes                                                                 */
@@ -100,6 +105,46 @@ public class Application
     /* Public Operations                                                                */
     /*==================================================================================*/
 
+         /*=============================================================================*/
+         /* OPERATION:   listQueues                                                     */
+         /**
+          * Returns a list of all the queues.
+          * <p>
+          * @return The list of queues.
+          * <p>
+          * @since Dec 31, 2014
+          */
+         /*=============================================================================*/
+   public List<Queue> listQueues ()
+   {
+      return queueRepo.findAll ();
+   }
+
+         /*=============================================================================*/
+         /* OPERATION:   createNew                                                      */
+         /**
+          * Creates and save a new queue instance.
+          * <p>
+          * @param aQueueName
+          *          The name for the queue.
+          *
+          * @param aQueueDescription
+          *          The description for the queue.
+          *
+          * @return the saved instance.
+          * <p>
+          * @since Dec 31, 2014
+          */
+         /*=============================================================================*/
+   public Queue createNewQueue (String aQueueName, String aQueueDescription)
+   {
+      Queue    myQueue        = new Queue ();
+      myQueue.setName         (aQueueName);
+      myQueue.setDescription  (aQueueDescription);
+
+      return queueRepo.save (myQueue);
+   }
+
     /*==================================================================================*/
     /* Abstract Operations (definitions)                                                */
     /*==================================================================================*/
@@ -113,4 +158,4 @@ public class Application
     /*==================================================================================*/
 }
 
-// EOF  Application.java
+// EOF  QueueService.java

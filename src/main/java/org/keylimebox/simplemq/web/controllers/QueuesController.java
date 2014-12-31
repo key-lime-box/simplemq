@@ -3,40 +3,39 @@
 /*                                  Package Definition                                  */
 /*======================================================================================*/
 
-package org.keylimebox.simplemq.server;
-
+package org.keylimebox.simplemq.web.controllers;
 
 /*======================================================================================*/
 /*                                       Imports                                        */
 /*======================================================================================*/
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import java.util.List;
+
+import org.keylimebox.simplemq.core.model.Queue;
+import org.keylimebox.simplemq.integration.services.QueueService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /*======================================================================================*/
 /*                           Class Definition / Implementation                          */
 /*======================================================================================*/
 /*======================================================================================*/
-/* CLASS:       Application                                                             */
+/* CLASS:       QueuesController                                                        */
 /**
- * Configures the Spring framework. Enables auto-configuration and scans the
- * <code>org.keylimebox</code> package for configuration beans.
+ * Controller for the Message Queue API.
  * <p>
  * @author      etlweather
- * @since       Oct 28, 2014
+ * @since       Dec 31, 2014
  */
 /*======================================================================================*/
 @SuppressWarnings ("nls")
-@Configuration
-@ComponentScan (basePackages= {"org.keylimebox.simplemq"})
-@EnableAutoConfiguration (exclude= {HibernateJpaAutoConfiguration.class, DataSourceAutoConfiguration.class})
-@EnableMongoRepositories (basePackages="org.keylimebox.simplemq.core.repositories")
-public class Application
+@RestController
+@RequestMapping ("/api/queues")
+public class QueuesController
 {
+
     /*==================================================================================*/
     /*===================================            ===================================*/
     /*=================================== Attributes ===================================*/
@@ -50,6 +49,15 @@ public class Application
     /*==================================================================================*/
     /* Private Attributes                                                               */
     /*==================================================================================*/
+
+                /*======================================================================*/
+                /* ATTRIBUTE: service                                                  */
+                /**
+                 * The service used to interact with the queues and subscribers.
+                 */
+                /*======================================================================*/
+   @Autowired
+   private QueueService             service;
 
     /*==================================================================================*/
     /* Class Attributes                                                                 */
@@ -100,6 +108,44 @@ public class Application
     /* Public Operations                                                                */
     /*==================================================================================*/
 
+         /*=============================================================================*/
+         /* OPERATION:   listQueues                                                     */
+         /**
+          * Lists all the queues.
+          * <p>
+          * @return The list of queues.
+          * <p>
+          * @since Dec 31, 2014
+          */
+         /*=============================================================================*/
+   @RequestMapping ("")
+   public List<Queue> listQueues ()
+   {
+      return service.listQueues ();
+   }
+
+         /*=============================================================================*/
+         /* OPERATION:   newQueue                                                       */
+         /**
+          * Creates a new queue entry.
+          * <p>
+          * @since Dec 31, 2014
+          */
+         /*=============================================================================*/
+   @RequestMapping ("/new")
+   public Queue newQueue (
+                           @RequestParam ("name")
+                           String aName,
+                           @RequestParam ("description")
+                           String aDescription
+                         )
+   {
+      return service.createNewQueue (aName, aDescription);
+   }
+
+
+
+
     /*==================================================================================*/
     /* Abstract Operations (definitions)                                                */
     /*==================================================================================*/
@@ -113,4 +159,4 @@ public class Application
     /*==================================================================================*/
 }
 
-// EOF  Application.java
+// EOF  ApiController.java
