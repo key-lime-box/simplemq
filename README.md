@@ -107,3 +107,14 @@ which is more convenient for payloads which consist of an ID for example.
 *Note*: if there are no subscriber to a queue, the messages published will not be 
 recorded.
 
+### Retrieving the Next Message
+
+GET `/api/queues/{queueId}/next`
+
+Parameters:
+ - `subscriber`: The ID of the subscriber to get the message for.
+ 
+*Note*: getting the next message does not remove it from the queue. A call to `remove` 
+is necessary to notify the message queue that the message has been successfully processed
+and can be removed.
+

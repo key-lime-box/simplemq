@@ -12,6 +12,7 @@ package org.keylimebox.simplemq.web.controllers;
 import java.util.List;
 
 import org.keylimebox.simplemq.core.model.Queue;
+import org.keylimebox.simplemq.core.model.QueuedMessage;
 import org.keylimebox.simplemq.integration.services.QueueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -168,6 +169,28 @@ public class QueuesController
       return service.subscribe (aQueueId, aSubscriberId);
    }
 
+         /*=============================================================================*/
+         /* OPERATION:   publish                                                        */
+         /**
+          * Publishes a message to the subscribers of a queue.
+          * <p>
+          * @param aQueueId
+          *          The ID of the queue to publish to.
+          *
+          * @param aPublisherId
+          *          The ID of the publisher sending the message.
+          *
+          * @param aPayloadParam
+          *          (Optional) A payload passed in as a request parameter.
+          *
+          * @param aPayloadBody
+          *          (Optional) A payload passed in as a request body.
+          *
+          * @return The IDs of the messages that were published.
+          * <p>
+          * @since Dec 31, 2014
+          */
+         /*=============================================================================*/
    @RequestMapping ("/{queueId}/publish")
    public List<String> publish (
                                  @PathVariable ("queueId")
@@ -177,7 +200,7 @@ public class QueuesController
                                  @RequestParam (value="payload", required=false)
                                  String aPayloadParam,
                                  @RequestBody (required=false)
-                                 Object aPayloadBody
+                                 String aPayloadBody
                                )
    {
       if (aPayloadBody == null && aPayloadParam == null) {
@@ -190,6 +213,29 @@ public class QueuesController
       }
 
       return service.publish (aQueueId, aPublisherId, myPayload);
+   }
+
+         /*=============================================================================*/
+         /* OPERATION:   next                                                           */
+         /**
+          * Gets the payload of the next message.
+          * <p>
+          * @param aQueueId
+          * @param aSubscriberId
+          * @return
+          * <p>
+          * @since Dec 31, 2014
+          */
+         /*=============================================================================*/
+   @RequestMapping ("/{queueId}/next")
+   public QueuedMessage next (
+                              @PathVariable ("queueId")
+                              String aQueueId,
+                              @RequestParam ("subscriber")
+                              String aSubscriberId
+                             )
+   {
+      return service.next (aQueueId, aSubscriberId);
    }
 
 

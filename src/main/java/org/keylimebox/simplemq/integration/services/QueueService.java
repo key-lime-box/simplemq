@@ -206,6 +206,7 @@ public class QueueService
          myMessage.setDateQueued    (myNow);
          myMessage.setPayload       (aPayload);
          myMessage.setPublisherId   (aPublisherId);
+         myMessage.setQueueId       (aQueueId);
          myMessage.setSubscriberId  (mySubscriber);
 
          myMessageIds.add (messageRepo.save (myMessage).getId ());
@@ -213,6 +214,25 @@ public class QueueService
 
       return myMessageIds;
    }
+
+         /*=============================================================================*/
+         /* OPERATION:   next                                                           */
+         /**
+          * Returns the next element from the queue for the given subscriber.
+          * <p>
+          * @param aQueueId
+          * @param aSubscriberId
+          * @return
+          * <p>
+          * @since Dec 31, 2014
+          */
+         /*=============================================================================*/
+   public QueuedMessage next (String aQueueId, String aSubscriberId)
+   {
+      return messageRepo.findFirstByQueueIdAndSubscriberIdOrderByDateQueuedAsc (aQueueId, aSubscriberId);
+   }
+
+
 
     /*==================================================================================*/
     /* Abstract Operations (definitions)                                                */

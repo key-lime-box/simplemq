@@ -28,6 +28,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface QueuedMessageRepository extends MongoRepository<QueuedMessage, String>
 {
 
+   public QueuedMessage findFirstByQueueIdAndSubscriberIdOrderByDateQueuedAsc (String aQueueId, String aSubscriberId);
 
 }
 
