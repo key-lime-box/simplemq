@@ -3,30 +3,37 @@
 /*                                  Package Definition                                  */
 /*======================================================================================*/
 
-package org.keylimebox.simplemq.core.model;
+package org.keylimebox.simplemq.web.controllers;
 
 /*======================================================================================*/
 /*                                       Imports                                        */
 /*======================================================================================*/
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import java.util.List;
+
+import org.keylimebox.simplemq.core.model.Subscriber;
+import org.keylimebox.simplemq.integration.services.SubscriberService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /*======================================================================================*/
 /*                           Class Definition / Implementation                          */
 /*======================================================================================*/
 /*======================================================================================*/
-/* CLASS:       Subscriber                                                       */
+/* CLASS:       SubscribersController                                                   */
 /**
- * Defines a consumer of messages.
+ * Controller for the Subscribers API.
  * <p>
  * @author      etlweather
  * @since       Dec 31, 2014
  */
 /*======================================================================================*/
 @SuppressWarnings ("nls")
-@Document (collection="subscribers")
-public class Subscriber
+@RestController
+@RequestMapping ("/api/subscribers")
+public class SubscribersController
 {
 
     /*==================================================================================*/
@@ -44,21 +51,13 @@ public class Subscriber
     /*==================================================================================*/
 
                 /*======================================================================*/
-                /* ATTRIBUTE: id                                                        */
+                /* ATTRIBUTE: service                                                  */
                 /**
-                 * The ID of the subscriber.
+                 * The service used to interact with the queues and subscribers.
                  */
                 /*======================================================================*/
-   @Id
-   private String             id;
-
-                /*======================================================================*/
-                /* ATTRIBUTE: name                                                      */
-                /**
-                 * A friendly name for this subcriber.
-                 */
-                /*======================================================================*/
-   private String             name;
+   @Autowired
+   private SubscriberService             service;
 
     /*==================================================================================*/
     /* Class Attributes                                                                 */
@@ -89,31 +88,9 @@ public class Subscriber
     /* Attribute Get Operations                                                         */
     /*==================================================================================*/
 
-   public String getId ()
-   {
-      return (id);
-   }
-
-
-   public String getName ()
-   {
-      return (name);
-   }
-
     /*==================================================================================*/
     /* Attribute Set Operations                                                         */
     /*==================================================================================*/
-
-   public void setId (String aId)
-   {
-      id = aId;
-   }
-
-   public void setName (String aName)
-   {
-      name = aName;
-   }
-
 
     /*==================================================================================*/
     /* Private Operations                                                               */
@@ -131,6 +108,42 @@ public class Subscriber
     /* Public Operations                                                                */
     /*==================================================================================*/
 
+         /*=============================================================================*/
+         /* OPERATION:   list                                                           */
+         /**
+          * Lists all the Subscriber.
+          * <p>
+          * @return The list of Subscriber.
+          * <p>
+          * @since Dec 31, 2014
+          */
+         /*=============================================================================*/
+   @RequestMapping ("")
+   public List<Subscriber> list ()
+   {
+      return service.list ();
+   }
+
+         /*=============================================================================*/
+         /* OPERATION:   newEntity                                                      */
+         /**
+          * Creates a new entry.
+          * <p>
+          * @since Dec 31, 2014
+          */
+         /*=============================================================================*/
+   @RequestMapping ("/new")
+   public Subscriber newEntity  (
+                                 @RequestParam ("name")
+                                 String aName
+                                )
+   {
+      return service.createNew (aName);
+   }
+
+
+
+
     /*==================================================================================*/
     /* Abstract Operations (definitions)                                                */
     /*==================================================================================*/
@@ -144,4 +157,4 @@ public class Subscriber
     /*==================================================================================*/
 }
 
-// EOF  Subscriber.java
+// EOF  ApiController.java

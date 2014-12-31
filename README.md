@@ -38,6 +38,12 @@ To create a queue, post the following parameters:
 - `name`: A friendly queue name.
 - `description`: A longer description as to what this queue is for.
 
+## Viewing Existing Publishers
+
+GET `/api/publishers`
+
+Returns the list of existing publishers.
+
 ## Registering a Publisher
 
 POST `/api/publishers/new`
@@ -45,11 +51,15 @@ POST `/api/publishers/new`
 Before publishing messages, the applications need to be registered as publisher. This is
 a one-time action which is normally done during installation, not at runtime.
 
+
 ## Publishing a Message
 
 POST `/api/queues/{queueId}/publish`
 
-A message can be published by posting a payload object (JSON) to this REST service.
+A message can be published by posting a payload object (JSON) to this REST service. 
+
+*Note*: if there are no subscriber to a queue, the messages published will not be 
+recorded.
 
 ## Listing the Subscribers
 
