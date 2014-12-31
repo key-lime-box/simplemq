@@ -238,9 +238,13 @@ public class QueuesController
                               String aSubscriberId,
                               @RequestParam (value="previous", required=false)
                               String aPreviousMessageId
-                             )
+                              )
    {
-      return service.removeAndNext (aPreviousMessageId, aQueueId, aSubscriberId);
+      QueuedMessage myNext = service.removeAndNext (aPreviousMessageId, aQueueId, aSubscriberId);
+      if (myNext == null) {
+         myNext = new QueuedMessage ();
+      }
+      return myNext;
    }
 
 
