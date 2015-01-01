@@ -2,7 +2,7 @@
 
 Why another Message Queue - because we needed something simple that does message 
 publish/subscribe the way we wanted it. We looked at all the _established_ message 
-queue systems. They are good, but they are also very complex, handles many messaging
+queue systems. They are good, but they are also very complex, handle many messaging
 needs, etc.
 
 Most publish/subscribe model we found available were based on _connected subscribers_. We 
@@ -15,6 +15,42 @@ application.
 
 The configuration of queues and persistence of messages and configuration is through 
 MongoDB.
+
+## Operations
+
+When a message is published to a queue, Simple MQ looks at the queue's subscriber and creates
+a queued message for each subscriber and persist them. If there are no subscriber to the 
+queue, no messages are queued.
+
+## Persistence
+
+In this initial implementation, the persistence to MongoDB is done in a very simple way. 
+There is a collection named `messages` in which the `QueuedMessage`s are stored.
+
+Each `QueuedMessage` contains the ID of the queue they are for as well as the subscriber
+they are for.
+
+### Idea of Improvement
+
+An idea on how this could be improved would be to dynamically create collections for each
+queue/subscriber pair. The advantages of doing it this way are:
+
+ - Less overhead on the storage when reading queued messages - no lookup required to filter
+   the entries in the `messages` collection to those applicable to the queue/subscriber
+   requested.  
+
+ - Adds flexibility to the management of the queues - one could define a queue/subscriber
+   collection to be a *circular buffer* so that even if the entries aren't read, the queue
+   does not grow indefinitely.
+
+There are also some downside to this approach:
+
+ - Harder to manage the state of the queue - you have to query each collections in the 
+   storage to find how much entries they each have, if they have been there for too long,
+   etc. When using a single collection for all messages, one can just query with aggregates.
+
+ - Can't use the Spring Data *repository* API and therefore require additional code for
+   the storage persistance.
 
 # REST API
 
