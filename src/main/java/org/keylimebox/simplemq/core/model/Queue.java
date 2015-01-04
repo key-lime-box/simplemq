@@ -127,6 +127,9 @@ public class Queue
 
    public List<String> getSubscribers ()
    {
+      if (subscribers == null) {
+         subscribers = new ArrayList<String> (0);
+      }
       return (subscribers);
    }
 
