@@ -17,6 +17,7 @@ import org.keylimebox.simplemq.core.model.Queue;
 import org.keylimebox.simplemq.core.model.QueuedMessage;
 import org.keylimebox.simplemq.core.repositories.QueueRepository;
 import org.keylimebox.simplemq.core.repositories.QueuedMessageRepository;
+import org.keylimebox.simplemq.integration.model.QueueStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,6 +69,15 @@ public class QueueService
                 /*======================================================================*/
    @Autowired
    private QueuedMessageRepository        messageRepo;
+
+                /*======================================================================*/
+                /* ATTRIBUTE: subscriberService                                         */
+                /**
+                 *
+                 */
+                /*======================================================================*/
+   @Autowired
+   private SubscriberService              subscriberService;
 
     /*==================================================================================*/
     /* Class Attributes                                                                 */
@@ -132,6 +142,75 @@ public class QueueService
    {
       return queueRepo.findAll ();
    }
+
+         /*=============================================================================*/
+         /* OPERATION:   status                                                         */
+         /**
+          * Reports the status of a given queue.
+          * <p>
+          * @param aQueueId
+          * @return
+          * <p>
+          * @since Jan 3, 2015
+          */
+         /*=============================================================================*/
+   public QueueStatus status (String aQueueId)
+   {
+      QueueStatus    myStatus             = new QueueStatus ();
+      Queue          myQueue              = queueRepo.findOne (aQueueId);
+      Long           myNbrItems           = messageRepo.countByQueueId (aQueueId);
+      QueuedMessage  myOldest             = messageRepo.findFirstByQueueIdOrderByDateQueuedAsc (aQueueId);
+
+
+      myStatus.setQueueDescription        (myQueue.getDescription ());
+      myStatus.setQueueId                 (myQueue.getId ());
+      myStatus.setQueueName               (myQueue.getName ());
+      myStatus.setNbrMessage              (myNbrItems);
+      myStatus.setNbrSubscribers          (myQueue.getSubscribers ().size ());
+
+      if (myOldest != null) {
+         myStatus.setOldestMessage        (myOldest.getDateQueued ());
+         myStatus.setOldestSubscriberId   (myOldest.getSubscriberId ());
+         myStatus.setOldestSubscriber     (subscriberService.get (myOldest.getSubscriberId ()).getName ());
+      }
+
+      return myStatus;
+   }
+
+         /*=============================================================================*/
+         /* OPERATION:   status                                                         */
+         /**
+          * Reports the status of a given queue.
+          * <p>
+          * @param aQueueId
+          * @return
+          * <p>
+          * @since Jan 3, 2015
+          */
+         /*=============================================================================*/
+   public QueueStatus status (String aQueueId, String aSubscriberId)
+   {
+      QueueStatus    myStatus             = new QueueStatus ();
+      Queue          myQueue              = queueRepo.findOne (aQueueId);
+      Long           myNbrItems           = messageRepo.countByQueueIdAndSubscriberId (aQueueId, aSubscriberId);
+      QueuedMessage  myOldest             = messageRepo.findFirstByQueueIdAndSubscriberIdOrderByDateQueuedAsc (aQueueId, aSubscriberId);
+
+
+      myStatus.setQueueDescription        (myQueue.getDescription ());
+      myStatus.setQueueId                 (myQueue.getId ());
+      myStatus.setQueueName               (myQueue.getName ());
+      myStatus.setNbrMessage              (myNbrItems);
+      myStatus.setNbrSubscribers          (myQueue.getSubscribers ().size ());
+
+      if (myOldest != null) {
+         myStatus.setOldestMessage        (myOldest.getDateQueued ());
+         myStatus.setOldestSubscriberId   (myOldest.getSubscriberId ());
+         myStatus.setOldestSubscriber     (subscriberService.get (myOldest.getSubscriberId ()).getName ());
+      }
+
+      return myStatus;
+   }
+
 
          /*=============================================================================*/
          /* OPERATION:   createNew                                                      */

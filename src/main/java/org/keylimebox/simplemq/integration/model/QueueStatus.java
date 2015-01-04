@@ -3,34 +3,19 @@
 /*                                  Package Definition                                  */
 /*======================================================================================*/
 
-package org.keylimebox.simplemq.integration.services;
+package org.keylimebox.simplemq.integration.model;
 
 /*======================================================================================*/
 /*                                       Imports                                        */
 /*======================================================================================*/
 
-import java.util.List;
-
-import org.keylimebox.simplemq.core.model.Subscriber;
-import org.keylimebox.simplemq.core.repositories.SubscriberRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import java.util.Date;
 
 /*======================================================================================*/
 /*                           Class Definition / Implementation                          */
 /*======================================================================================*/
-/*======================================================================================*/
-/* CLASS:       SubscriberService                                                       */
-/**
- * Provides various services to interact with the subscribers.
- * <p>
- * @author      etlweather
- * @since       Dec 31, 2014
- */
-/*======================================================================================*/
 @SuppressWarnings ("nls")
-@Service
-public class SubscriberService
+public class QueueStatus
 {
 
     /*==================================================================================*/
@@ -47,14 +32,21 @@ public class SubscriberService
     /* Private Attributes                                                               */
     /*==================================================================================*/
 
-                /*======================================================================*/
-                /* ATTRIBUTE: repository                                                */
-                /**
-                 * Data access object.
-                 */
-                /*======================================================================*/
-   @Autowired
-   private SubscriberRepository        repository;
+   private String             queueId;
+
+   private String             queueName;
+
+   private String             queueDescription;
+
+   private Long               nbrMessage;
+
+   private Date               oldestMessage;
+
+   private String             oldestSubscriber;
+
+   private String             oldestSubscriberId;
+
+   private long               nbrSubscribers;
 
     /*==================================================================================*/
     /* Class Attributes                                                                 */
@@ -85,9 +77,89 @@ public class SubscriberService
     /* Attribute Get Operations                                                         */
     /*==================================================================================*/
 
+   public Long getNbrMessage ()
+   {
+      return (nbrMessage);
+   }
+
+   public Date getOldestMessage ()
+   {
+      return (oldestMessage);
+   }
+
+   public String getQueueDescription ()
+   {
+      return (queueDescription);
+   }
+
+   public String getQueueId ()
+   {
+      return (queueId);
+   }
+
+   public String getQueueName ()
+   {
+      return (queueName);
+   }
+
+   public String getOldestSubscriber ()
+   {
+      return (oldestSubscriber);
+   }
+
+   public String getOldestSubscriberId ()
+   {
+      return (oldestSubscriberId);
+   }
+
+   public long getNbrSubscribers ()
+   {
+      return (nbrSubscribers);
+   }
+
     /*==================================================================================*/
     /* Attribute Set Operations                                                         */
     /*==================================================================================*/
+
+   public void setNbrMessage (Long aNbrMessage)
+   {
+      nbrMessage = aNbrMessage;
+   }
+
+   public void setOldestMessage (Date aOldestMessage)
+   {
+      oldestMessage = aOldestMessage;
+   }
+
+   public void setQueueDescription (String aQueueDescription)
+   {
+      queueDescription = aQueueDescription;
+   }
+
+   public void setQueueId (String aQueueId)
+   {
+      queueId = aQueueId;
+   }
+
+   public void setQueueName (String aQueueName)
+   {
+      queueName = aQueueName;
+   }
+
+   public void setOldestSubscriber (String aOldestSubscriber)
+   {
+      oldestSubscriber = aOldestSubscriber;
+   }
+
+   public void setOldestSubscriberId (String aOldestSubscriberId)
+   {
+      oldestSubscriberId = aOldestSubscriberId;
+   }
+
+   public void setNbrSubscribers (long aNbrSubscribers)
+   {
+      nbrSubscribers = aNbrSubscribers;
+   }
 
     /*==================================================================================*/
     /* Private Operations                                                               */
@@ -105,60 +177,6 @@ public class SubscriberService
     /* Public Operations                                                                */
     /*==================================================================================*/
 
-         /*=============================================================================*/
-         /* OPERATION:   list                                                           */
-         /**
-          * Returns a list of all the subscribers.
-          * <p>
-          * @return The list of subscribers.
-          * <p>
-          * @since Dec 31, 2014
-          */
-         /*=============================================================================*/
-   public List<Subscriber> list ()
-   {
-      return repository.findAll ();
-   }
-
-         /*=============================================================================*/
-         /* OPERATION:   get                                                            */
-         /**
-          * Retrieves a given subscriber.
-          * <p>
-          * @param aSubscriberId
-          * @return
-          * <p>
-          * @since Jan 3, 2015
-          */
-         /*=============================================================================*/
-   public Subscriber get (String aSubscriberId)
-   {
-      return repository.findOne (aSubscriberId);
-   }
-
-
-         /*=============================================================================*/
-         /* OPERATION:   createNew                                                      */
-         /**
-          * Creates and save a new Subscriber instance.
-          * <p>
-          * @param aName
-          *          The name for the Subscriber.
-          *
-          * @return the saved instance.
-          * <p>
-          * @since Dec 31, 2014
-          */
-         /*=============================================================================*/
-   public Subscriber createNew (String aName)
-   {
-      Subscriber myEntity   = new Subscriber ();
-
-      myEntity.setName     (aName);
-
-      return repository.save (myEntity);
-   }
-
     /*==================================================================================*/
     /* Abstract Operations (definitions)                                                */
     /*==================================================================================*/
@@ -172,4 +190,4 @@ public class SubscriberService
     /*==================================================================================*/
 }
 
-// EOF  QueueService.java
+// EOF  QueueStatusReport.java

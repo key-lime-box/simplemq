@@ -30,6 +30,13 @@ public interface QueuedMessageRepository extends MongoRepository<QueuedMessage, 
 
    public QueuedMessage findFirstByQueueIdAndSubscriberIdOrderByDateQueuedAsc (String aQueueId, String aSubscriberId);
 
+   public QueuedMessage findFirstByQueueIdOrderByDateQueuedAsc (String aQueueId);
+
+   public Long countByQueueId (String aQueueId);
+
+   public Long countByQueueIdAndSubscriberId (String aQueueId, String aSubscriberId);
+
+
 }
 
 // EOF  PublisherRepository.java

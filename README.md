@@ -151,3 +151,42 @@ Parameters:
  - `subscriber`: The ID of the subscriber to get the message for.
  - `previous`: (Optional) The ID of the previous message to be removed before getting the next one.
 
+# Monitoring
+
+A REST service is available for use with monitoring systems. At the moment, the *Nagios* 
+format is supported. A queue can be monitored by itself, or, a Subscriber ID can be 
+supplied to see the state of the queue as regards to that given subscriber.
+
+Monitoring a complete queue is not in itself very useful as it does not tell you which
+subscriber stopped processing messages, but there may be some use-cases where this is 
+needed (for example, if you are going to have only 1 subscriber to a queue, then it is 
+one less parameter to pass).
+
+The monitoring API is as follow:
+
+GET `/status/queues/{queueId}/?minutes={numberOfMinuteToWarn}&subscriber={subscriberId}&format=nagios`
+
+ - `minutes`: Is a number of minutes after which a message in the queue is considered 
+    stale and a warning should be issued.
+    
+ - `subscriber`: (Optional) Is the ID of the subscriber you want to monitor in regards
+    to the given queue.
+    
+ - `format`: (Optional - default to nagios) Is the format for the outpout. Only Nagios
+    format is currently supported.
+    
+## Queue Details
+
+The API for the queues also has a status service returning detalis in `JSON` format as 
+follow:
+
+GET `/api/queues/{queueId}/status`
+
+Parameters:
+
+ - `subscriber`: (Optional) Is the ID of the subscriber you want to monitor in regards
+    to the given queue.
+
+This can be convenient for manual inspection or for monitoring systems which can deal
+with `JSON` format.    
+

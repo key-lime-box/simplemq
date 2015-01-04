@@ -9,28 +9,28 @@ package org.keylimebox.simplemq.integration.services;
 /*                                       Imports                                        */
 /*======================================================================================*/
 
-import java.util.List;
+import java.util.Date;
 
-import org.keylimebox.simplemq.core.model.Subscriber;
-import org.keylimebox.simplemq.core.repositories.SubscriberRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang3.time.DateUtils;
+import org.keylimebox.simplemq.integration.model.QueueStatus;
+import org.ocpsoft.prettytime.PrettyTime;
 import org.springframework.stereotype.Service;
 
 /*======================================================================================*/
 /*                           Class Definition / Implementation                          */
 /*======================================================================================*/
 /*======================================================================================*/
-/* CLASS:       SubscriberService                                                       */
+/* CLASS:       MonitoringFormatService                                                 */
 /**
- * Provides various services to interact with the subscribers.
+ * Converts status reports into format compatible with various monitoring systems.
  * <p>
  * @author      etlweather
- * @since       Dec 31, 2014
+ * @since       Jan 3, 2015
  */
 /*======================================================================================*/
 @SuppressWarnings ("nls")
 @Service
-public class SubscriberService
+public class MonitoringService
 {
 
     /*==================================================================================*/
@@ -46,15 +46,6 @@ public class SubscriberService
     /*==================================================================================*/
     /* Private Attributes                                                               */
     /*==================================================================================*/
-
-                /*======================================================================*/
-                /* ATTRIBUTE: repository                                                */
-                /**
-                 * Data access object.
-                 */
-                /*======================================================================*/
-   @Autowired
-   private SubscriberRepository        repository;
 
     /*==================================================================================*/
     /* Class Attributes                                                                 */
@@ -106,58 +97,48 @@ public class SubscriberService
     /*==================================================================================*/
 
          /*=============================================================================*/
-         /* OPERATION:   list                                                           */
+         /* OPERATION:   toNagios                                                       */
          /**
-          * Returns a list of all the subscribers.
+          * Creates a Nagios compatible status message.
           * <p>
-          * @return The list of subscribers.
-          * <p>
-          * @since Dec 31, 2014
-          */
-         /*=============================================================================*/
-   public List<Subscriber> list ()
-   {
-      return repository.findAll ();
-   }
-
-         /*=============================================================================*/
-         /* OPERATION:   get                                                            */
-         /**
-          * Retrieves a given subscriber.
-          * <p>
-          * @param aSubscriberId
+          * @param aQueueStatus
+          * @param aWarnMinutes
           * @return
           * <p>
           * @since Jan 3, 2015
           */
          /*=============================================================================*/
-   public Subscriber get (String aSubscriberId)
+   public String toNagios (QueueStatus aQueueStatus, int aWarnMinutes)
    {
-      return repository.findOne (aSubscriberId);
+      String      myStatus       = "OK";
+      Date        myNow          = new Date ();
+      Date        myDate         = aQueueStatus.getOldestMessage ();
+      PrettyTime  myPrettyTime   = new PrettyTime (myNow);
+
+      if (myDate != null) {
+         Date  myThreshold = DateUtils.addMinutes (myNow, aWarnMinutes * -1);
+         if (myDate.before (myThreshold)) {
+            myStatus       = "WARNING";
+         }
+      }
+
+      StringBuilder mySb = new StringBuilder ();
+      mySb.append ("Status: ");
+      mySb.append (myStatus);
+      if (myDate != null) {
+         mySb.append (" - Oldest message: ");
+         mySb.append (myPrettyTime.format (myDate));
+      }
+      else {
+         mySb.append (" - No message in queue");
+      }
+      mySb.append (" |");
+      mySb.append ("nbr=");
+      mySb.append (aQueueStatus.getNbrMessage ());
+
+      return mySb.toString ();
    }
 
-
-         /*=============================================================================*/
-         /* OPERATION:   createNew                                                      */
-         /**
-          * Creates and save a new Subscriber instance.
-          * <p>
-          * @param aName
-          *          The name for the Subscriber.
-          *
-          * @return the saved instance.
-          * <p>
-          * @since Dec 31, 2014
-          */
-         /*=============================================================================*/
-   public Subscriber createNew (String aName)
-   {
-      Subscriber myEntity   = new Subscriber ();
-
-      myEntity.setName     (aName);
-
-      return repository.save (myEntity);
-   }
 
     /*==================================================================================*/
     /* Abstract Operations (definitions)                                                */
@@ -172,4 +153,4 @@ public class SubscriberService
     /*==================================================================================*/
 }
 
-// EOF  QueueService.java
+// EOF  MonitoringFormatService.java
