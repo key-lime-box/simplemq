@@ -277,7 +277,11 @@ public class QueueService
    public List<String> publish (String aQueueId, String aPublisherId, Object aPayload)
    {
       Date           myNow          = new Date ();
-      List<String>   mySubscribers  = queueRepo.findOne (aQueueId).getSubscribers ();
+      Queue          myQueue        = queueRepo.findOne (aQueueId);
+      if (myQueue == null) {
+         throw new IllegalArgumentException (aQueueId + " is not a valid Queue ID");
+      }
+      List<String>   mySubscribers  = myQueue.getSubscribers ();
       List<String>   myMessageIds   = new ArrayList<String> ();
 
       for (String mySubscriber : mySubscribers) {
