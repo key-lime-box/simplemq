@@ -1,0 +1,279 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Key Lime Box&#39; Simple MQ by key-lime-box</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <h1>Key Lime Box&#39; Simple MQ</h1>
+        <p>A simple Message Queue with persistent subscribers.</p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/key-lime-box/simplemq" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/key-lime-box/simplemq/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/key-lime-box/simplemq/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        <h1>
+<a id="key-lime-box-simple-mq" class="anchor" href="#key-lime-box-simple-mq" aria-hidden="true"><span class="octicon octicon-link"></span></a>Key Lime Box' Simple MQ</h1>
+
+<p>Why another Message Queue - because we needed something simple that does message 
+publish/subscribe the way we wanted it. We looked at all the <em>established</em> message 
+queue systems. They are good, but they are also very complex, handle many messaging
+needs, etc.</p>
+
+<p>Most publish/subscribe model we found available were based on <em>connected subscribers</em>. We 
+wanted persistent messages to subscribers whether connected or not.</p>
+
+<h1>
+<a id="basic-architecture" class="anchor" href="#basic-architecture" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basic Architecture</h1>
+
+<p>We have a web server providing the REST API. This is a Spring Boot (Spring 4) based web 
+application.</p>
+
+<p>The configuration of queues and persistence of messages and configuration is through 
+MongoDB.</p>
+
+<h2>
+<a id="operations" class="anchor" href="#operations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Operations</h2>
+
+<p>When a message is published to a queue, Simple MQ looks at the queue's subscriber and creates
+a queued message for each subscriber and persist them. If there are no subscriber to the 
+queue, no messages are queued.</p>
+
+<h2>
+<a id="persistence" class="anchor" href="#persistence" aria-hidden="true"><span class="octicon octicon-link"></span></a>Persistence</h2>
+
+<p>In this initial implementation, the persistence to MongoDB is done in a very simple way. 
+There is a collection named <code>messages</code> in which the <code>QueuedMessage</code>s are stored.</p>
+
+<p>Each <code>QueuedMessage</code> contains the ID of the queue they are for as well as the subscriber
+they are for.</p>
+
+<h3>
+<a id="idea-of-improvement" class="anchor" href="#idea-of-improvement" aria-hidden="true"><span class="octicon octicon-link"></span></a>Idea of Improvement</h3>
+
+<p>An idea on how this could be improved would be to dynamically create collections for each
+queue/subscriber pair. The advantages of doing it this way are:</p>
+
+<ul>
+<li><p>Less overhead on the storage when reading queued messages - no lookup required to filter
+the entries in the <code>messages</code> collection to those applicable to the queue/subscriber
+requested.  </p></li>
+<li><p>Adds flexibility to the management of the queues - one could define a queue/subscriber
+collection to be a <em>circular buffer</em> so that even if the entries aren't read, the queue
+does not grow indefinitely.</p></li>
+</ul>
+
+<p>There are also some downside to this approach:</p>
+
+<ul>
+<li><p>Harder to manage the state of the queue - you have to query each collections in the 
+storage to find how much entries they each have, if they have been there for too long,
+etc. When using a single collection for all messages, one can just query with aggregates.</p></li>
+<li><p>Can't use the Spring Data <em>repository</em> API and therefore require additional code for
+the storage persistance.</p></li>
+</ul>
+
+<h1>
+<a id="rest-api" class="anchor" href="#rest-api" aria-hidden="true"><span class="octicon octicon-link"></span></a>REST API</h1>
+
+<h2>
+<a id="publishers" class="anchor" href="#publishers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Publishers</h2>
+
+<h3>
+<a id="viewing-existing-publishers" class="anchor" href="#viewing-existing-publishers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Viewing Existing Publishers</h3>
+
+<p>GET <code>/api/publishers</code></p>
+
+<p>Returns the list of existing publishers.</p>
+
+<h3>
+<a id="registering-a-new-publisher" class="anchor" href="#registering-a-new-publisher" aria-hidden="true"><span class="octicon octicon-link"></span></a>Registering a New Publisher</h3>
+
+<p>POST <code>/api/publishers/new</code></p>
+
+<p>Before publishing messages, the applications need to be registered as publisher. This is
+a one-time action which is normally done during installation, not at runtime.</p>
+
+<h2>
+<a id="subscribers" class="anchor" href="#subscribers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Subscribers</h2>
+
+<h3>
+<a id="listing-the-subscribers" class="anchor" href="#listing-the-subscribers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Listing the Subscribers</h3>
+
+<p>GET <code>/api/subscribers</code></p>
+
+<p>Returns the list of all registered subscribers.</p>
+
+<h3>
+<a id="registering-a-new-subscriber" class="anchor" href="#registering-a-new-subscriber" aria-hidden="true"><span class="octicon octicon-link"></span></a>Registering a New Subscriber</h3>
+
+<p>POST <code>/api/subscribers/new</code></p>
+
+<p>Before a subscriber can register with queues, it needs to be registered as a subscriber
+so it gets its own ID. </p>
+
+<p>This is done by posting the following parameters to the above REST service:</p>
+
+<ul>
+<li>
+<code>name</code>: A friendly name for this subscriber.</li>
+</ul>
+
+<p>This is normally done only once when an application is deployed either manually or by the
+configuration management system. It is not something that generally gets put into the code
+of the subscriber application.</p>
+
+<h2>
+<a id="queues" class="anchor" href="#queues" aria-hidden="true"><span class="octicon octicon-link"></span></a>Queues</h2>
+
+<h3>
+<a id="listing-the-queues" class="anchor" href="#listing-the-queues" aria-hidden="true"><span class="octicon octicon-link"></span></a>Listing the Queues</h3>
+
+<p>GET <code>/api/queues</code></p>
+
+<p>This API call returns a list of the queues which exist.</p>
+
+<h3>
+<a id="creating-a-queue" class="anchor" href="#creating-a-queue" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating a Queue</h3>
+
+<p>POST <code>/api/queues/new</code></p>
+
+<p>Applications that are going to be publishing messages must first create a queue. This is 
+a one-time action which is normally done during the deployment of the application (i.e.
+manually or through a configuration management system, not necessarily in the application's
+code).</p>
+
+<p>To create a queue, post the following parameters:</p>
+
+<ul>
+<li>
+<code>name</code>: A friendly queue name.</li>
+<li>
+<code>description</code>: A longer description as to what this queue is for.</li>
+</ul>
+
+<h3>
+<a id="subscribing-to-a-queue" class="anchor" href="#subscribing-to-a-queue" aria-hidden="true"><span class="octicon octicon-link"></span></a>Subscribing to a Queue</h3>
+
+<p>POST <code>/api/queues/{queueId}/subscribe</code></p>
+
+<p>To subscribe to a queue, post the following parameters to this REST service:</p>
+
+<ul>
+<li>
+<code>subscriber</code>: The ID of the subscriber.</li>
+</ul>
+
+<h3>
+<a id="publishing-a-message" class="anchor" href="#publishing-a-message" aria-hidden="true"><span class="octicon octicon-link"></span></a>Publishing a Message</h3>
+
+<p>POST <code>/api/queues/{queueId}/publish</code></p>
+
+<p>A message can be published by posting a payload object (JSON) to this REST service with
+the following parameters:</p>
+
+<ul>
+<li>
+<code>publisher</code>: The ID of the publisher. </li>
+</ul>
+
+<p>A simple <code>String</code> payload can also be sent using a request parameter called <code>payload</code>, 
+which is more convenient for payloads which consist of an ID for example.</p>
+
+<p><em>Note</em>: if there are no subscriber to a queue, the messages published will not be 
+recorded.</p>
+
+<h3>
+<a id="retrieving-the-next-message" class="anchor" href="#retrieving-the-next-message" aria-hidden="true"><span class="octicon octicon-link"></span></a>Retrieving the Next Message</h3>
+
+<p>GET <code>/api/queues/{queueId}/next</code></p>
+
+<p>Parameters:</p>
+
+<ul>
+<li>
+<code>subscriber</code>: The ID of the subscriber to get the message for.</li>
+<li>
+<code>previous</code>: (Optional) The ID of the previous message to be removed before getting the next one.</li>
+</ul>
+
+<h1>
+<a id="monitoring" class="anchor" href="#monitoring" aria-hidden="true"><span class="octicon octicon-link"></span></a>Monitoring</h1>
+
+<p>A REST service is available for use with monitoring systems. At the moment, the <em>Nagios</em> 
+format is supported. A queue can be monitored by itself, or, a Subscriber ID can be 
+supplied to see the state of the queue as regards to that given subscriber.</p>
+
+<p>Monitoring a complete queue is not in itself very useful as it does not tell you which
+subscriber stopped processing messages, but there may be some use-cases where this is 
+needed (for example, if you are going to have only 1 subscriber to a queue, then it is 
+one less parameter to pass).</p>
+
+<p>The monitoring API is as follow:</p>
+
+<p>GET <code>/status/queues/{queueId}/?minutes={numberOfMinuteToWarn}&amp;subscriber={subscriberId}&amp;format=nagios</code></p>
+
+<ul>
+<li><p><code>minutes</code>: Is a number of minutes after which a message in the queue is considered 
+stale and a warning should be issued.</p></li>
+<li><p><code>subscriber</code>: (Optional) Is the ID of the subscriber you want to monitor in regards
+to the given queue.</p></li>
+<li><p><code>format</code>: (Optional - default to nagios) Is the format for the outpout. Only Nagios
+format is currently supported.</p></li>
+</ul>
+
+<h2>
+<a id="queue-details" class="anchor" href="#queue-details" aria-hidden="true"><span class="octicon octicon-link"></span></a>Queue Details</h2>
+
+<p>The API for the queues also has a status service returning detalis in <code>JSON</code> format as 
+follow:</p>
+
+<p>GET <code>/api/queues/{queueId}/status</code></p>
+
+<p>Parameters:</p>
+
+<ul>
+<li>
+<code>subscriber</code>: (Optional) Is the ID of the subscriber you want to monitor in regards
+to the given queue.</li>
+</ul>
+
+<p>This can be convenient for manual inspection or for monitoring systems which can deal
+with <code>JSON</code> format.    </p>
+      </section>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/key-lime-box">key-lime-box</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
