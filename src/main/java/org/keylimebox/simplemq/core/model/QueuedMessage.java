@@ -18,6 +18,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 /*======================================================================================*/
 /*                           Class Definition / Implementation                          */
 /*======================================================================================*/
+/*======================================================================================*/
+/* CLASS:       QueuedMessage                                                           */
+/**
+ * A message that was saved into a queue for a given subscriber.
+ * <p>
+ * @author      etlweather
+ * @since       Jan 3, 2015
+ */
+/*======================================================================================*/
 @SuppressWarnings ("nls")
 @Document (collection="messages")
 public class QueuedMessage
